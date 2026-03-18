@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { WiDaySunny, WiNightClear, WiThermometer, WiHumidity, WiRaindrop } from "react-icons/wi";
 
 import cloud from "../../icons/cloud.png";
 import fewcloud from "../../icons/mostly_sunny.png";
@@ -61,6 +62,19 @@ const formatTemp = (value) => {
   return Math.round(value);
 };
 
+const getHumidityLevel = (humidity) => {
+  if (typeof humidity !== "number") return "bilinmiyor";
+  if (humidity >= 75) return "yuksek nem";
+  if (humidity >= 45) return "orta nem";
+  return "dusuk nem";
+};
+
+const getRainLevel = (chance) => {
+  if (chance >= 70) return "yuksek risk";
+  if (chance >= 35) return "orta risk";
+  return "dusuk risk";
+};
+
 export default function Weather() {
   const router = useRouter();
   const weatherApiKey = process.env.NEXT_PUBLIC_WEATHER_KEY;
@@ -112,16 +126,31 @@ export default function Weather() {
     const list = weather?.list ?? [];
     return list.slice(0, 15).map((item) => {
       const englishDescription = item?.weather?.[0]?.description ?? "";
+      const rawDayTemp = item?.main?.temp_max;
+      const rawNightTemp = item?.main?.temp_min;
+      const rawFeelsLike = item?.main?.feels_like;
+      const humidity = item?.main?.humidity;
+      const rainChance = typeof item?.pop === "number" ? Math.round(item.pop * 100) : 0;
+      const dayNightDiff = (typeof rawDayTemp === "number" && typeof rawNightTemp === "number")
+        ? Math.round(rawDayTemp - rawNightTemp)
+        : null;
+      const feelsDiff = (typeof rawFeelsLike === "number" && typeof rawDayTemp === "number")
+        ? Math.round(rawFeelsLike - rawDayTemp)
+        : null;
 
       return {
         dt: item.dt,
         date: formatDate(item.dt),
         hour: formatHour(item.dt),
-        dayTemp: formatTemp(item?.main?.temp_max),
-        nightTemp: formatTemp(item?.main?.temp_min),
-        feelsLike: formatTemp(item?.main?.feels_like),
-        humidity: item?.main?.humidity ?? "--",
-        rainChance: typeof item?.pop === "number" ? Math.round(item.pop * 100) : 0,
+        dayTemp: formatTemp(rawDayTemp),
+        nightTemp: formatTemp(rawNightTemp),
+        feelsLike: formatTemp(rawFeelsLike),
+        humidity: humidity ?? "--",
+        rainChance,
+        dayNightDiff,
+        feelsDiff,
+        humidityLevel: getHumidityLevel(humidity),
+        rainLevel: getRainLevel(rainChance),
         description: DESCRIPTION_MAP[englishDescription] || englishDescription || "bilinmiyor",
         icon: getWeatherIcon(englishDescription)
       };
@@ -202,26 +231,58 @@ export default function Weather() {
                     </span>
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-5">
-                    <div className="rounded-lg bg-slate-800/60 px-3 py-2">
-                      <p className="text-xs text-slate-300">Gunduz</p>
-                      <p className="mt-1 font-semibold">{item.dayTemp}°C</p>
+                  <div className="mt-4 grid grid-cols-2 gap-3 text-sm md:grid-cols-3 lg:grid-cols-5">
+                    <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="flex items-center gap-1.5 text-cyan-200">
+                        <WiDaySunny size={18} />
+                        <p className="text-xs font-semibold uppercase tracking-wide">Gunduz</p>
+                      </div>
+                      <p className="mt-1.5 text-base font-bold text-slate-100">{item.dayTemp}°C</p>
+                      <p className="mt-1 text-[11px] text-slate-300">
+                        {item.dayNightDiff === null
+                          ? "Gece farki bilinmiyor"
+                          : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? "daha sicak" : "daha serin"}`}
+                      </p>
                     </div>
-                    <div className="rounded-lg bg-slate-800/60 px-3 py-2">
-                      <p className="text-xs text-slate-300">Gece</p>
-                      <p className="mt-1 font-semibold">{item.nightTemp}°C</p>
+                    <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="flex items-center gap-1.5 text-cyan-200">
+                        <WiNightClear size={18} />
+                        <p className="text-xs font-semibold uppercase tracking-wide">Gece</p>
+                      </div>
+                      <p className="mt-1.5 text-base font-bold text-slate-100">{item.nightTemp}°C</p>
+                      <p className="mt-1 text-[11px] text-slate-300">
+                        {item.dayNightDiff === null
+                          ? "Gunduz farki bilinmiyor"
+                          : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? "daha serin" : "daha sicak"}`}
+                      </p>
                     </div>
-                    <div className="rounded-lg bg-slate-800/60 px-3 py-2">
-                      <p className="text-xs text-slate-300">Hissedilen</p>
-                      <p className="mt-1 font-semibold">{item.feelsLike}°C</p>
+                    <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="flex items-center gap-1.5 text-cyan-200">
+                        <WiThermometer size={18} />
+                        <p className="text-xs font-semibold uppercase tracking-wide">Hissedilen</p>
+                      </div>
+                      <p className="mt-1.5 text-base font-bold text-slate-100">{item.feelsLike}°C</p>
+                      <p className="mt-1 text-[11px] text-slate-300">
+                        {item.feelsDiff === null
+                          ? "Karsilastirma yok"
+                          : `${Math.abs(item.feelsDiff)}°C ${item.feelsDiff >= 0 ? "daha sicak hissedilir" : "daha serin hissedilir"}`}
+                      </p>
                     </div>
-                    <div className="rounded-lg bg-slate-800/60 px-3 py-2">
-                      <p className="text-xs text-slate-300">Nem</p>
-                      <p className="mt-1 font-semibold">%{item.humidity}</p>
+                    <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="flex items-center gap-1.5 text-cyan-200">
+                        <WiHumidity size={18} />
+                        <p className="text-xs font-semibold uppercase tracking-wide">Nem</p>
+                      </div>
+                      <p className="mt-1.5 text-base font-bold text-slate-100">%{item.humidity}</p>
+                      <p className="mt-1 text-[11px] text-slate-300">{item.humidityLevel}</p>
                     </div>
-                    <div className="rounded-lg bg-slate-800/60 px-3 py-2">
-                      <p className="text-xs text-slate-300">Yagis</p>
-                      <p className="mt-1 font-semibold">%{item.rainChance}</p>
+                    <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="flex items-center gap-1.5 text-cyan-200">
+                        <WiRaindrop size={18} />
+                        <p className="text-xs font-semibold uppercase tracking-wide">Yagis</p>
+                      </div>
+                      <p className="mt-1.5 text-base font-bold text-slate-100">%{item.rainChance}</p>
+                      <p className="mt-1 text-[11px] text-slate-300">{item.rainLevel}</p>
                     </div>
                   </div>
                 </article>
