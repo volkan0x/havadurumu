@@ -10,6 +10,8 @@ import axios from 'axios'
 
 import App from '@/components/Weather3'
 import CanvasTextDemo from '@/components/canvas-text-demo'
+import GlowingStarsBackgroundCardPreview from '@/components/glowing-stars-demo'
+import { Illustration } from '@/components/ui/glowing-stars'
 import { BackgroundBeamsWithCollision } from '@/components/ui/background-beams-with-collision'
 import { provinces } from '@/data/provinces'
 import cloud from '../icons/cloud.png'
@@ -320,6 +322,9 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                 </p>
               </div>
             </BackgroundBeamsWithCollision>
+            <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-6">
+              {/* <GlowingStarsBackgroundCardPreview /> */}
+            </div>
                 <div className={'relative z-30 flex justify-between items-center m-auto px-4 pb-12 text-white'}>
               <form onSubmit={handleSearchSubmit}
                   className={'relative z-40 flex justify-between w-full sm:w-[80%] lg:w-[46%] items-center m-auto px-4 py-2.5 bg-transparent border border-slate-300/30 text-white rounded-2xl backdrop-blur-md shadow-[0_12px_40px_rgba(15,23,42,0.35)]'}>
@@ -411,76 +416,81 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                       {forecastItems.map((item) => (
                         <article
                           key={item.dt}
-                          className="rounded-xl border border-slate-200/20 bg-transparent p-4 shadow-sm transition hover:border-cyan-300/40 backdrop-blur-sm"
+                          className="relative overflow-hidden rounded-xl border border-slate-200/20 bg-transparent p-4 shadow-sm transition hover:border-cyan-300/40 backdrop-blur-sm"
                         >
-                          <div className="flex flex-wrap items-center justify-between gap-3">
-                            <div className="flex items-center gap-3">
-                              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent border border-slate-300/25 backdrop-blur-sm">
-                                <Image src={item.icon} alt="hava ikonu" className="h-7 w-7 object-contain" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-semibold text-slate-100">{item.date}</p>
-                                <p className="text-xs text-slate-300">Saat {item.hour}</p>
-                              </div>
-                            </div>
-
-                            <span className="rounded-full border border-slate-200/25 bg-transparent px-3 py-1 text-xs font-medium uppercase tracking-wide text-cyan-200 backdrop-blur-sm">
-                              {item.description}
-                            </span>
+                          <div className="pointer-events-none absolute inset-0 opacity-35">
+                            <Illustration mouseEnter={false} className="h-full w-full p-2" />
                           </div>
+                          <div className="relative z-10">
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent border border-slate-300/25 backdrop-blur-sm">
+                                  <Image src={item.icon} alt="hava ikonu" className="h-7 w-7 object-contain" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-100">{item.date}</p>
+                                  <p className="text-xs text-slate-300">Saat {item.hour}</p>
+                                </div>
+                              </div>
 
-                          <div className="mt-4 grid grid-cols-2 gap-3 text-sm md:grid-cols-3 lg:grid-cols-5">
-                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
-                              <div className="flex items-center gap-1.5 text-cyan-200">
-                                <WiDaySunny size={18} />
-                                <p className="text-xs font-semibold uppercase tracking-wide">Gunduz</p>
-                              </div>
-                              <p className="mt-1.5 text-base font-bold text-slate-100">{item.dayTemp}°C</p>
-                              <p className="mt-1 text-[11px] text-slate-300">
-                                {item.dayNightDiff === null
-                                  ? 'Gece farki bilinmiyor'
-                                  : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? 'daha sicak' : 'daha serin'}`}
-                              </p>
+                              <span className="rounded-full border border-slate-200/25 bg-transparent px-3 py-1 text-xs font-medium uppercase tracking-wide text-cyan-200 backdrop-blur-sm">
+                                {item.description}
+                              </span>
                             </div>
-                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
-                              <div className="flex items-center gap-1.5 text-cyan-200">
-                                <WiNightClear size={18} />
-                                <p className="text-xs font-semibold uppercase tracking-wide">Gece</p>
+
+                            <div className="mt-4 grid grid-cols-2 gap-3 text-sm md:grid-cols-3 lg:grid-cols-5">
+                              <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
+                                <div className="flex items-center gap-1.5 text-cyan-200">
+                                  <WiDaySunny size={18} />
+                                  <p className="text-xs font-semibold uppercase tracking-wide">Gunduz</p>
+                                </div>
+                                <p className="mt-1.5 text-base font-bold text-slate-100">{item.dayTemp}°C</p>
+                                <p className="mt-1 text-[11px] text-slate-300">
+                                  {item.dayNightDiff === null
+                                    ? 'Gece farki bilinmiyor'
+                                    : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? 'daha sicak' : 'daha serin'}`}
+                                </p>
                               </div>
-                              <p className="mt-1.5 text-base font-bold text-slate-100">{item.nightTemp}°C</p>
-                              <p className="mt-1 text-[11px] text-slate-300">
-                                {item.dayNightDiff === null
-                                  ? 'Gunduz farki bilinmiyor'
-                                  : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? 'daha serin' : 'daha sicak'}`}
-                              </p>
-                            </div>
-                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
-                              <div className="flex items-center gap-1.5 text-cyan-200">
-                                <WiThermometer size={18} />
-                                <p className="text-xs font-semibold uppercase tracking-wide">Hissedilen</p>
+                              <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
+                                <div className="flex items-center gap-1.5 text-cyan-200">
+                                  <WiNightClear size={18} />
+                                  <p className="text-xs font-semibold uppercase tracking-wide">Gece</p>
+                                </div>
+                                <p className="mt-1.5 text-base font-bold text-slate-100">{item.nightTemp}°C</p>
+                                <p className="mt-1 text-[11px] text-slate-300">
+                                  {item.dayNightDiff === null
+                                    ? 'Gunduz farki bilinmiyor'
+                                    : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? 'daha serin' : 'daha sicak'}`}
+                                </p>
                               </div>
-                              <p className="mt-1.5 text-base font-bold text-slate-100">{item.feelsLike}°C</p>
-                              <p className="mt-1 text-[11px] text-slate-300">
-                                {item.feelsDiff === null
-                                  ? 'Karsilastirma yok'
-                                  : `${Math.abs(item.feelsDiff)}°C ${item.feelsDiff >= 0 ? 'daha sicak hissedilir' : 'daha serin hissedilir'}`}
-                              </p>
-                            </div>
-                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
-                              <div className="flex items-center gap-1.5 text-cyan-200">
-                                <WiHumidity size={18} />
-                                <p className="text-xs font-semibold uppercase tracking-wide">Nem</p>
+                              <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
+                                <div className="flex items-center gap-1.5 text-cyan-200">
+                                  <WiThermometer size={18} />
+                                  <p className="text-xs font-semibold uppercase tracking-wide">Hissedilen</p>
+                                </div>
+                                <p className="mt-1.5 text-base font-bold text-slate-100">{item.feelsLike}°C</p>
+                                <p className="mt-1 text-[11px] text-slate-300">
+                                  {item.feelsDiff === null
+                                    ? 'Karsilastirma yok'
+                                    : `${Math.abs(item.feelsDiff)}°C ${item.feelsDiff >= 0 ? 'daha sicak hissedilir' : 'daha serin hissedilir'}`}
+                                </p>
                               </div>
-                              <p className="mt-1.5 text-base font-bold text-slate-100">%{item.humidity}</p>
-                              <p className="mt-1 text-[11px] text-slate-300">{item.humidityLevel}</p>
-                            </div>
-                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
-                              <div className="flex items-center gap-1.5 text-cyan-200">
-                                <WiRaindrop size={18} />
-                                <p className="text-xs font-semibold uppercase tracking-wide">Yagis</p>
+                              <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
+                                <div className="flex items-center gap-1.5 text-cyan-200">
+                                  <WiHumidity size={18} />
+                                  <p className="text-xs font-semibold uppercase tracking-wide">Nem</p>
+                                </div>
+                                <p className="mt-1.5 text-base font-bold text-slate-100">%{item.humidity}</p>
+                                <p className="mt-1 text-[11px] text-slate-300">{item.humidityLevel}</p>
                               </div>
-                              <p className="mt-1.5 text-base font-bold text-slate-100">%{item.rainChance}</p>
-                              <p className="mt-1 text-[11px] text-slate-300">{item.rainLevel}</p>
+                              <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
+                                <div className="flex items-center gap-1.5 text-cyan-200">
+                                  <WiRaindrop size={18} />
+                                  <p className="text-xs font-semibold uppercase tracking-wide">Yagis</p>
+                                </div>
+                                <p className="mt-1.5 text-base font-bold text-slate-100">%{item.rainChance}</p>
+                                <p className="mt-1 text-[11px] text-slate-300">{item.rainLevel}</p>
+                              </div>
                             </div>
                           </div>
                         </article>
