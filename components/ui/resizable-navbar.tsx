@@ -235,7 +235,7 @@ export const NavbarLogo = () => {
   return (
     <a
       href="#"
-      className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-white"
+      className="relative z-20 mr-4 flex items-center px-2 py-1 text-sm font-normal text-white"
     >
       <Image
         src={AristoLogo}
@@ -244,7 +244,6 @@ export const NavbarLogo = () => {
         height={30}
         className="brightness-0 invert"
       />
-      <span className="font-medium text-white">Havadurumu</span>
     </a>
   );
 };

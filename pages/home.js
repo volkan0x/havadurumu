@@ -10,9 +10,7 @@ import axios from 'axios'
 
 import App from '@/components/Weather3'
 import CanvasTextDemo from '@/components/canvas-text-demo'
-import GlowingStarsBackgroundCardPreview from '@/components/glowing-stars-demo'
 import { Illustration } from '@/components/ui/glowing-stars'
-import { BackgroundBeamsWithCollision } from '@/components/ui/background-beams-with-collision'
 import { provinces } from '@/data/provinces'
 import cloud from '../icons/cloud.png'
 import fewcloud from '../icons/mostly_sunny.png'
@@ -310,7 +308,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
               <div className="absolute -top-24 -left-20 h-64 w-64 rounded-full bg-cyan-400/20 blur-3xl"></div>
               <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"></div>
             </div>
-            <BackgroundBeamsWithCollision className='h-auto min-h-[260px] bg-transparent from-transparent to-transparent dark:from-transparent dark:to-transparent'>
+            <div className='h-auto min-h-[260px] bg-transparent'>
               <div className='relative z-10 py-10 px-4 mx-auto text-center'>
                 <p className='inline-flex items-center rounded-full border border-cyan-200/20 bg-transparent px-4 py-1 text-xs font-semibold tracking-[0.2em] text-cyan-200 uppercase'>
                   Anlık ve 15 günlük hava görünümü
@@ -321,9 +319,8 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                   Şehrinizi arayın; sıcaklık, rüzgar ve yağış trendlerini sade ve hızlı bir arayüzle görüntüleyin.
                 </p>
               </div>
-            </BackgroundBeamsWithCollision>
+            </div>
             <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-6">
-              {/* <GlowingStarsBackgroundCardPreview /> */}
             </div>
                 <div className={'relative z-30 flex justify-between items-center m-auto px-4 pb-12 text-white'}>
               <form onSubmit={handleSearchSubmit}
