@@ -347,6 +347,8 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
   const seoTitle = `${cityLabel} Hava Durumu 15 Gunluk Tahmin`
   const seoDescription = `${cityLabel} icin anlik ve 15 gunluk hava durumu tahmini. Sicaklik, hissedilen, nem ve yagis olasiligini saatlik olarak takip edin.`
   const canonicalUrl = `https://www.havadurumu15.com/hava/${citySlug}`
+  const isIndexable = !apiError && forecastItems.length > 0
+  const ogImage = 'https://www.havadurumu15.com/logo4x.png'
   const seoNarrative = buildSeoNarrative(cityLabel, citySlug, forecastItems)
 
   const webPageSchema = {
@@ -408,13 +410,21 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
       <Head>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
+        {!isIndexable && <meta name="robots" content="noindex, nofollow" />}
         <link rel="canonical" href={canonicalUrl} />
+        <link rel="alternate" hrefLang="tr-TR" href={canonicalUrl} />
         <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Havadurumu15" />
         <meta property="og:locale" content="tr_TR" />
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDescription} />
         <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:alt" content={`${cityLabel} hava durumu gorseli`} />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={ogImage} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
         {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
