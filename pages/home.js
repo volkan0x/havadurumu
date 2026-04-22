@@ -9,6 +9,9 @@ import Link from 'next/link'
 import axios from 'axios'
 
 import App from '@/components/Weather3'
+import CanvasTextDemo from '@/components/canvas-text-demo'
+import { BackgroundBeamsWithCollision } from '@/components/ui/background-beams-with-collision'
+import { provinces } from '@/data/provinces'
 import Logo from '@/public/logo4x.png'
 import cloud from '../icons/cloud.png'
 import fewcloud from '../icons/mostly_sunny.png'
@@ -81,12 +84,27 @@ const getRainLevel = (chance) => {
   return 'dusuk risk'
 }
 
+const normalizeSearchValue = (value) =>
+  value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ı/g, 'i')
+    .replace(/ş/g, 's')
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .trim()
+
 const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true }) => {
   const [city, setCity] = useState('')
   const [detectedCity, setDetectedCity] = useState('')
   const [localWeather, setLocalWeather] = useState(null)
   const [apiError, setApiError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1)
 
   const router = useRouter();
   const weatherApiKey = process.env.NEXT_PUBLIC_WEATHER_KEY
@@ -199,7 +217,57 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
     e.preventDefault()
     const normalizedCity = city.trim()
     if (!normalizedCity) return
+
+    const exactMatch = provinces.find((item) => normalizeSearchValue(item.name) === normalizeSearchValue(normalizedCity))
+    if (exactMatch) {
+      router.push(`/hava/${exactMatch.slug}`)
+      return
+    }
+
     router.push(`/hava/${encodeURIComponent(normalizedCity)}`)
+  }
+
+  const citySuggestions = useMemo(() => {
+    const query = normalizeSearchValue(city)
+    if (!query) return []
+
+    return provinces
+      .filter((item) => normalizeSearchValue(item.name).includes(query))
+      .slice(0, 8)
+  }, [city])
+
+  const handleSelectSuggestion = (suggestion) => {
+    setCity(suggestion.name)
+    setActiveSuggestionIndex(-1)
+    setIsSearchFocused(false)
+    router.push(`/hava/${suggestion.slug}`)
+  }
+
+  const handleSearchInputKeyDown = (event) => {
+    if (!citySuggestions.length) return
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      setActiveSuggestionIndex((prev) => (prev + 1) % citySuggestions.length)
+      return
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      setActiveSuggestionIndex((prev) => (prev <= 0 ? citySuggestions.length - 1 : prev - 1))
+      return
+    }
+
+    if (event.key === 'Escape') {
+      setActiveSuggestionIndex(-1)
+      setIsSearchFocused(false)
+      return
+    }
+
+    if (event.key === 'Enter' && activeSuggestionIndex >= 0) {
+      event.preventDefault()
+      handleSelectSuggestion(citySuggestions[activeSuggestionIndex])
+    }
   }
 
   const canonicalUrl = 'https://www.havadurumu15.com/'
@@ -236,7 +304,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
             <meta name='twitter:card' content='summary_large_image'/>
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }} />
           </Head>
-          <nav className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-700">
+          <nav className="relative overflow-hidden bg-transparent">
             <div className="pointer-events-none absolute inset-0">
               <div className="absolute -top-24 -left-20 h-64 w-64 rounded-full bg-cyan-400/20 blur-3xl"></div>
               <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"></div>
@@ -249,16 +317,16 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                 <span className="text-sm font-semibold tracking-wide text-slate-100">Havadurumu</span>
               </Link>
 
-              <div className="flex items-center gap-2 rounded-full border border-slate-300/30 bg-slate-900/40 p-1 backdrop-blur-md">
+              <div className="flex items-center gap-2 rounded-full border border-slate-300/30 bg-transparent p-1 backdrop-blur-md">
                 <Link
                   href="/"
-                  className="rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-slate-700/70"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
                 >
                   Ana Sayfa
                 </Link>
                 <Link
                   href="/#sehirler"
-                  className="rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-slate-700/70"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
                 >
                   Sehirler
                 </Link>
@@ -270,28 +338,58 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                 </div>
               </div>
             </div>
-            <div className='relative z-10 py-10 px-4 mx-auto text-center'>
-              <p className='inline-flex items-center rounded-full border border-cyan-200/20 bg-slate-900/40 px-4 py-1 text-xs font-semibold tracking-[0.2em] text-cyan-200 uppercase'>
-                Anlık ve 15 günlük hava görünümü
-              </p>
-              <h1 className='mx-auto mt-4 max-w-3xl text-3xl font-extrabold leading-tight text-slate-100 sm:text-4xl lg:text-5xl'>
-                15 günlük hava durumu tahminlerini inceleyin,
-                <span className='block text-cyan-300'>yağış haritalarını tek ekranda takip edin.</span>
-              </h1>
-              <p className='mx-auto mt-4 max-w-2xl text-sm text-slate-300 sm:text-base'>
-                Şehrinizi arayın; sıcaklık, rüzgar ve yağış trendlerini sade ve hızlı bir arayüzle görüntüleyin.
-              </p>
-            </div>
-            <div className={'relative z-10 flex justify-between items-center m-auto px-4 pb-12 text-white'}>
+            <BackgroundBeamsWithCollision className='h-auto min-h-[260px] bg-transparent from-transparent to-transparent dark:from-transparent dark:to-transparent'>
+              <div className='relative z-10 py-10 px-4 mx-auto text-center'>
+                <p className='inline-flex items-center rounded-full border border-cyan-200/20 bg-transparent px-4 py-1 text-xs font-semibold tracking-[0.2em] text-cyan-200 uppercase'>
+                  Anlık ve 15 günlük hava görünümü
+                </p>
+                <h1 className='sr-only'>15 günlük hava durumu tahminlerini inceleyin, yağış haritalarını tek ekranda takip edin.</h1>
+                <CanvasTextDemo />
+                <p className='mx-auto mt-4 max-w-2xl text-sm text-slate-300 sm:text-base'>
+                  Şehrinizi arayın; sıcaklık, rüzgar ve yağış trendlerini sade ve hızlı bir arayüzle görüntüleyin.
+                </p>
+              </div>
+            </BackgroundBeamsWithCollision>
+                <div className={'relative z-30 flex justify-between items-center m-auto px-4 pb-12 text-white'}>
               <form onSubmit={handleSearchSubmit}
-                    className={'flex justify-between w-full sm:w-[80%] lg:w-[46%] items-center m-auto px-4 py-2.5 bg-slate-900/45 border border-slate-300/30 text-white rounded-2xl backdrop-blur-md shadow-[0_12px_40px_rgba(15,23,42,0.35)]'}>
-                <div>
+                  className={'relative z-40 flex justify-between w-full sm:w-[80%] lg:w-[46%] items-center m-auto px-4 py-2.5 bg-transparent border border-slate-300/30 text-white rounded-2xl backdrop-blur-md shadow-[0_12px_40px_rgba(15,23,42,0.35)]'}>
+                <div className='relative w-full'>
                   <input
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
+                      onKeyDown={handleSearchInputKeyDown}
+                      onFocus={() => setIsSearchFocused(true)}
+                      onBlur={() => {
+                        setTimeout(() => {
+                          setIsSearchFocused(false)
+                          setActiveSuggestionIndex(-1)
+                        }, 120)
+                      }}
                       className={'w-full bg-transparent border-none text-slate-100 placeholder:text-slate-300/80 focus:outline-none text-sm sm:text-base'}
                       type="text"
+                      autoComplete='off'
                       placeholder="Şehir ara"/>
+
+                  {isSearchFocused && citySuggestions.length > 0 && (
+                    <ul className='absolute left-0 right-0 top-[calc(100%+10px)] z-50 overflow-hidden rounded-xl border border-slate-300/30 bg-transparent backdrop-blur-xl shadow-[0_12px_30px_rgba(2,6,23,0.45)]'>
+                      {citySuggestions.map((suggestion, index) => (
+                        <li key={suggestion.slug}>
+                          <button
+                            type='button'
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => handleSelectSuggestion(suggestion)}
+                            className={`w-full px-3 py-2 text-left text-sm transition ${
+                              activeSuggestionIndex === index
+                                ? 'bg-cyan-400/20 text-cyan-100'
+                                : 'text-slate-100 hover:bg-slate-700/70'
+                            }`}
+                          >
+                            {suggestion.name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <button type="submit" className='rounded-xl bg-cyan-400/90 p-2 text-slate-900 transition hover:bg-cyan-300' >
                   <BsSearch size={20}/>
@@ -300,7 +398,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
             </div>
             {showLocalCityPanel && (
               <section className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-10 text-slate-100">
-                <div className="rounded-2xl border border-slate-200/20 bg-slate-900/40 p-5 shadow-[0_16px_40px_rgba(15,23,42,0.3)] backdrop-blur-md md:p-6">
+                <div className="rounded-2xl border border-slate-200/20 bg-transparent p-5 shadow-[0_16px_40px_rgba(15,23,42,0.3)] backdrop-blur-md md:p-6">
                   <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.22em] text-cyan-200/90">Konumunuza gore tahmin</p>
@@ -309,7 +407,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                     </div>
 
                     {current && (
-                      <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-200/20 bg-slate-800/50 p-3 text-center text-sm md:min-w-[320px]">
+                      <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-200/20 bg-transparent p-3 text-center text-sm md:min-w-[320px] backdrop-blur-sm">
                         <div>
                           <p className="text-slate-300">Anlik</p>
                           <p className="mt-1 text-lg font-semibold">{current.dayTemp}°C</p>
@@ -333,7 +431,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                   )}
 
                   {loading && (
-                    <p className="mt-4 rounded-xl border border-slate-200/20 bg-slate-900/40 px-4 py-3 text-sm text-slate-200">
+                    <p className="mt-4 rounded-xl border border-slate-200/20 bg-transparent px-4 py-3 text-sm text-slate-200 backdrop-blur-sm">
                       Veriler yukleniyor...
                     </p>
                   )}
@@ -343,11 +441,11 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                       {forecastItems.map((item) => (
                         <article
                           key={item.dt}
-                          className="rounded-xl border border-slate-200/20 bg-slate-900/45 p-4 shadow-sm transition hover:border-cyan-300/40"
+                          className="rounded-xl border border-slate-200/20 bg-transparent p-4 shadow-sm transition hover:border-cyan-300/40 backdrop-blur-sm"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
-                              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800/70">
+                              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent border border-slate-300/25 backdrop-blur-sm">
                                 <Image src={item.icon} alt="hava ikonu" className="h-7 w-7 object-contain" />
                               </div>
                               <div>
@@ -356,13 +454,13 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                               </div>
                             </div>
 
-                            <span className="rounded-full border border-slate-200/25 bg-slate-800/70 px-3 py-1 text-xs font-medium uppercase tracking-wide text-cyan-200">
+                            <span className="rounded-full border border-slate-200/25 bg-transparent px-3 py-1 text-xs font-medium uppercase tracking-wide text-cyan-200 backdrop-blur-sm">
                               {item.description}
                             </span>
                           </div>
 
                           <div className="mt-4 grid grid-cols-2 gap-3 text-sm md:grid-cols-3 lg:grid-cols-5">
-                            <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                               <div className="flex items-center gap-1.5 text-cyan-200">
                                 <WiDaySunny size={18} />
                                 <p className="text-xs font-semibold uppercase tracking-wide">Gunduz</p>
@@ -374,7 +472,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                                   : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? 'daha sicak' : 'daha serin'}`}
                               </p>
                             </div>
-                            <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                               <div className="flex items-center gap-1.5 text-cyan-200">
                                 <WiNightClear size={18} />
                                 <p className="text-xs font-semibold uppercase tracking-wide">Gece</p>
@@ -386,7 +484,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                                   : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? 'daha serin' : 'daha sicak'}`}
                               </p>
                             </div>
-                            <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                               <div className="flex items-center gap-1.5 text-cyan-200">
                                 <WiThermometer size={18} />
                                 <p className="text-xs font-semibold uppercase tracking-wide">Hissedilen</p>
@@ -398,7 +496,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                                   : `${Math.abs(item.feelsDiff)}°C ${item.feelsDiff >= 0 ? 'daha sicak hissedilir' : 'daha serin hissedilir'}`}
                               </p>
                             </div>
-                            <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                               <div className="flex items-center gap-1.5 text-cyan-200">
                                 <WiHumidity size={18} />
                                 <p className="text-xs font-semibold uppercase tracking-wide">Nem</p>
@@ -406,7 +504,7 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
                               <p className="mt-1.5 text-base font-bold text-slate-100">%{item.humidity}</p>
                               <p className="mt-1 text-[11px] text-slate-300">{item.humidityLevel}</p>
                             </div>
-                            <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                            <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                               <div className="flex items-center gap-1.5 text-cyan-200">
                                 <WiRaindrop size={18} />
                                 <p className="text-xs font-semibold uppercase tracking-wide">Yagis</p>

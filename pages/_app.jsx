@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import App  from 'next/app';
 import {DefaultSeo} from 'next-seo'
 import React from 'react'
+import { BackgroundBeams } from '@/components/ui/background-beams'
 
 
 // export default function MyApp({ Component, pageProps }) {
@@ -13,7 +14,11 @@ export default class MyApp extends App {
         const { Component, pageProps } = this.props;
         return (
             <React.Fragment>
-              <DefaultSeo
+              <div className="fixed inset-0 z-0 bg-neutral-950 pointer-events-none">
+                <BackgroundBeams />
+              </div>
+              <div className="relative z-10">
+                <DefaultSeo
                 title="Hava Durumu 15 Gunluk"
                 defaultDescription="Turkiye geneli il il 15 gunluk hava durumu tahminleri, anlik sicaklik, nem ve yagis olasiligi verileri."
                 titleTemplate="%s | Hava Durumu 15"
@@ -39,6 +44,7 @@ export default class MyApp extends App {
                 }}
               />
               <Component {...pageProps} />
+              </div>
           </React.Fragment>
         );
     }

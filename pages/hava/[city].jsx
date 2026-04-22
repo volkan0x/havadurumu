@@ -432,7 +432,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
 
       <Home iFrame={true} Cardd={false} showLocalCityPanel={false}>
         <section className="mx-auto w-full max-w-6xl px-4 pb-8 pt-2 text-slate-100">
-          <div className="rounded-2xl border border-slate-200/20 bg-slate-900/40 p-5 shadow-[0_16px_40px_rgba(15,23,42,0.3)] backdrop-blur-md md:p-6">
+          <div className="rounded-2xl border border-slate-200/20 bg-transparent p-5 shadow-[0_16px_40px_rgba(15,23,42,0.3)] backdrop-blur-md md:p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.22em] text-cyan-200/90">Sehir Detay Tahmini</p>
@@ -441,7 +441,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
               </div>
 
               {current && (
-                <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-200/20 bg-slate-800/50 p-3 text-center text-sm md:min-w-[320px]">
+                <div className="grid grid-cols-3 gap-3 rounded-xl border border-slate-200/20 bg-transparent p-3 text-center text-sm md:min-w-[320px] backdrop-blur-sm">
                   <div>
                     <p className="text-slate-300">Anlik</p>
                     <p className="mt-1 text-lg font-semibold">{current.dayTemp}°C</p>
@@ -472,11 +472,11 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                 {forecastItems.map((item) => (
                   <article
                     key={item.dt}
-                    className="rounded-xl border border-slate-200/20 bg-slate-900/45 p-4 shadow-sm transition hover:border-cyan-300/40"
+                    className="rounded-xl border border-slate-200/20 bg-transparent p-4 shadow-sm transition hover:border-cyan-300/40 backdrop-blur-sm"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800/70">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent border border-slate-300/25 backdrop-blur-sm">
                           <Image src={getWeatherIcon(item.englishDescription)} alt="hava ikonu" className="h-7 w-7 object-contain" />
                         </div>
                         <div>
@@ -485,13 +485,13 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                         </div>
                       </div>
 
-                      <span className="rounded-full border border-slate-200/25 bg-slate-800/70 px-3 py-1 text-xs font-medium uppercase tracking-wide text-cyan-200">
+                      <span className="rounded-full border border-slate-200/25 bg-transparent px-3 py-1 text-xs font-medium uppercase tracking-wide text-cyan-200 backdrop-blur-sm">
                         {item.description}
                       </span>
                     </div>
 
                     <div className="mt-4 grid grid-cols-2 gap-3 text-sm md:grid-cols-3 lg:grid-cols-5">
-                      <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 text-cyan-200">
                           <WiDaySunny size={18} />
                           <p className="text-xs font-semibold uppercase tracking-wide">Gunduz</p>
@@ -503,7 +503,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                             : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? 'daha sicak' : 'daha serin'}`}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 text-cyan-200">
                           <WiNightClear size={18} />
                           <p className="text-xs font-semibold uppercase tracking-wide">Gece</p>
@@ -515,7 +515,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                             : `${Math.abs(item.dayNightDiff)}°C ${item.dayNightDiff >= 0 ? 'daha serin' : 'daha sicak'}`}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 text-cyan-200">
                           <WiThermometer size={18} />
                           <p className="text-xs font-semibold uppercase tracking-wide">Hissedilen</p>
@@ -527,7 +527,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                             : `${Math.abs(item.feelsDiff)}°C ${item.feelsDiff >= 0 ? 'daha sicak hissedilir' : 'daha serin hissedilir'}`}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 text-cyan-200">
                           <WiHumidity size={18} />
                           <p className="text-xs font-semibold uppercase tracking-wide">Nem</p>
@@ -535,7 +535,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                         <p className="mt-1.5 text-base font-bold text-slate-100">%{item.humidity}</p>
                         <p className="mt-1 text-[11px] text-slate-300">{item.humidityLevel}</p>
                       </div>
-                      <div className="rounded-lg border border-slate-500/40 bg-slate-800/75 px-3 py-2 shadow-inner shadow-black/10">
+                      <div className="rounded-lg border border-slate-500/40 bg-transparent px-3 py-2 shadow-inner shadow-black/10 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 text-cyan-200">
                           <WiRaindrop size={18} />
                           <p className="text-xs font-semibold uppercase tracking-wide">Yagis</p>
@@ -548,18 +548,18 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                 ))}
               </div>
 
-              <aside className="h-fit rounded-xl border border-slate-200/20 bg-slate-900/45 p-4">
+              <aside className="h-fit rounded-xl border border-slate-200/20 bg-transparent p-4 backdrop-blur-sm">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-cyan-200">Hizli Bilgiler</h2>
                 <div className="mt-3 space-y-2 text-sm">
-                  <div className="rounded-lg bg-slate-800/60 px-3 py-2">
+                  <div className="rounded-lg bg-transparent border border-slate-500/35 px-3 py-2 backdrop-blur-sm">
                     <p className="text-slate-300">Sehir</p>
                     <p className="mt-1 font-medium capitalize text-slate-100">{cityLabel}</p>
                   </div>
-                  <div className="rounded-lg bg-slate-800/60 px-3 py-2">
+                  <div className="rounded-lg bg-transparent border border-slate-500/35 px-3 py-2 backdrop-blur-sm">
                     <p className="text-slate-300">Son guncelleme</p>
                     <p className="mt-1 font-medium text-slate-100">{current ? `${current.date} ${current.hour}` : '-'}</p>
                   </div>
-                  <div className="rounded-lg bg-slate-800/60 px-3 py-2">
+                  <div className="rounded-lg bg-transparent border border-slate-500/35 px-3 py-2 backdrop-blur-sm">
                     <p className="text-slate-300">Durum</p>
                     <p className="mt-1 font-medium text-slate-100">{current?.description || '-'}</p>
                   </div>
@@ -568,7 +568,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
               </div>
 
               {seoNarrative && (
-                <article className="mt-5 rounded-2xl border border-slate-200/20 bg-slate-900/45 p-5 md:p-6">
+                <article className="mt-5 rounded-2xl border border-slate-200/20 bg-transparent p-5 md:p-6 backdrop-blur-sm">
                   <h2 className="text-xl font-semibold text-cyan-200">{cityLabel} Hava Durumu Yorumu</h2>
                   <div className="mt-4 space-y-4 text-sm leading-7 text-slate-200 md:text-base">
                     <section>
@@ -592,7 +592,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
               )}
 
               {(internalLinkGroups?.popular?.length > 0 || internalLinkGroups?.similarClimate?.length > 0) && (
-                <section className="mt-5 rounded-2xl border border-slate-200/20 bg-slate-900/45 p-5 md:p-6">
+                <section className="mt-5 rounded-2xl border border-slate-200/20 bg-transparent p-5 md:p-6 backdrop-blur-sm">
                   <h2 className="text-lg font-semibold text-cyan-200">Diger Sehirlerin 15 Gunluk Tahminleri</h2>
 
                   {internalLinkGroups?.popular?.length > 0 && (
@@ -603,7 +603,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                           <Link
                             key={`popular-${city.slug}`}
                             href={`/hava/${city.slug}`}
-                            className="rounded-full border border-slate-300/25 bg-slate-800/65 px-3 py-1.5 text-sm text-slate-100 transition hover:border-cyan-300/60"
+                            className="rounded-full border border-slate-300/25 bg-transparent px-3 py-1.5 text-sm text-slate-100 transition hover:border-cyan-300/60 hover:bg-white/10"
                           >
                             {city.name} hava durumu
                           </Link>
@@ -620,7 +620,7 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
                           <Link
                             key={`climate-${city.slug}`}
                             href={`/hava/${city.slug}`}
-                            className="rounded-full border border-slate-300/25 bg-slate-800/65 px-3 py-1.5 text-sm text-slate-100 transition hover:border-cyan-300/60"
+                            className="rounded-full border border-slate-300/25 bg-transparent px-3 py-1.5 text-sm text-slate-100 transition hover:border-cyan-300/60 hover:bg-white/10"
                           >
                             {city.name} hava durumu
                           </Link>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Card, CardHeader, CardFooter} from "@nextui-org/react";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 import axios from "axios";
 import Link from 'next/link';
 import cloud from "../icons/cloud.png";
@@ -122,7 +122,7 @@ export default function App() {
     };
     return (
         <div className="p-4 md:p-8 min-h-screen">
-            <div className="mb-6 md:mb-8 rounded-2xl border border-white/10 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 py-4 md:px-6 md:py-5">
+            <div className="mb-6 md:mb-8 rounded-2xl border border-white/10 bg-transparent backdrop-blur-sm px-4 py-4 md:px-6 md:py-5">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
                         <h1 className="text-white text-2xl md:text-3xl font-semibold tracking-tight">Turkiye Il Il Hava Durumu</h1>
@@ -133,7 +133,7 @@ export default function App() {
                             <Link
                                 key={city.slug}
                                 href={`/hava/${city.slug}`}
-                                className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs md:text-sm text-white hover:bg-white/20 transition-colors"
+                                className="rounded-full border border-white/20 bg-transparent px-3 py-1.5 text-xs md:text-sm text-white hover:bg-white/10 transition-colors"
                             >
                                 {city.name}
                             </Link>
@@ -156,45 +156,43 @@ export default function App() {
                     <Link
                         key={idx}
                         href={`/hava/${city.slug}`}
-                        className="cursor-pointer h-full block"
+                        className="cursor-pointer h-full block min-h-[200px]"
                     >
-                        <Card 
-                            isFooterBlurred
-                            className="bg-gray-600 rounded-xl h-[200px] hover:opacity-90 transition-opacity w-full"
-                        >
-                            <CardHeader className="flex absolute z-10 p-4 md:p-6 pb-24 items-start w-full">
-                                <div className="w-full">
+                        <div className="relative h-full rounded-2xl border border-white/10 p-2">
+                            <GlowingEffect
+                                spread={40}
+                                glow={true}
+                                disabled={false}
+                                proximity={64}
+                                inactiveZone={0.01}
+                            />
+                            <div className="relative flex h-full flex-col justify-between gap-3 overflow-hidden rounded-xl bg-transparent p-4 md:p-5 backdrop-blur-sm dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
+                                <div className="flex items-start justify-between">
                                     <div>
-                                        <h4 className="text-white font-medium text-2xl md:text-3xl">{city.name}</h4>
-                                        <p className="text-xs text-white/60 uppercase font-bold">{cityDate && cityDate}</p>
+                                        <h4 className="text-white font-semibold text-xl md:text-2xl">{city.name}</h4>
+                                        <p className="text-xs text-white/50 uppercase font-medium mt-0.5">{cityDate}</p>
                                     </div>
-                                    <div className="flex space-x-6 md:space-x-8 pt-4 pb-4 md:pt-6">
+                                    {cityWeather && (
+                                        <div className="max-w-[44px] md:max-w-[56px] shrink-0">
+                                            <Image src={getWeatherIcon(weatherDescription)} alt="weather-icon" />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex items-end justify-between">
+                                    <div className="flex gap-5">
                                         <div>
-                                            <p className="text-xs text-white/60 uppercase font-medium">GÜN:</p>
-                                            <p className="text-lg md:text-xl text-white uppercase font-bold mb-6">{renderTemperature(cityWeather?.main?.temp_max)}</p>
+                                            <p className="text-xs text-white/50 uppercase font-medium">Gündüz</p>
+                                            <p className="text-lg md:text-xl text-white font-bold">{renderTemperature(cityWeather?.main?.temp_max)}</p>
                                         </div>
                                         <div>
-                                            <p className="text-xs text-white/60 uppercase font-medium">GECE:</p>
-                                            <p className="text-lg md:text-xl text-white uppercase font-bold mb-6">{renderTemperature(cityWeather?.main?.temp_min)}</p>
+                                            <p className="text-xs text-white/50 uppercase font-medium">Gece</p>
+                                            <p className="text-lg md:text-xl text-white font-bold">{renderTemperature(cityWeather?.main?.temp_min)}</p>
                                         </div>
                                     </div>
+                                    <span className="text-xs text-white/60 bg-transparent border border-white/15 rounded px-2 py-1">15 Günlük</span>
                                 </div>
-                                {cityWeather &&
-                                <div className="absolute top-4 md:top-6 right-4 md:right-6 max-w-[48px] md:max-w-[62px]">
-                                    <Image src={getWeatherIcon(weatherDescription)} alt='weather-icon'/>
-                                </div>}
-                            </CardHeader>
-                            <CardFooter className="absolute bg-white/30 bottom-0 border-t-0 border-zinc-100/50 z-10 justify-between w-full px-4 md:px-6">
-                                <div>
-                                    <p className="text-white/80 text-xs md:text-sm">Yağmur ihtimali %80</p>
-                                </div>
-                                <span
-                                    className="text-xs md:text-sm text-white/80 bg-black/40 rounded p-1 m-1 md:m-2"
-                                >
-                                    15 Günlük
-                                </span>
-                            </CardFooter>
-                        </Card>
+                            </div>
+                        </div>
                     </Link>
                 )})}
             </div>
