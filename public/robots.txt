@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Allow: /hava/
+Disallow: /home
 
 Sitemap: https://www.havadurumu15.com/sitemap.xml
+Host: https://www.havadurumu15.com
