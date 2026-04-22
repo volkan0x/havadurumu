@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
 import App  from 'next/app';
+import Head from 'next/head';
 import {DefaultSeo} from 'next-seo'
 import React from 'react'
 import { BackgroundBeams } from '@/components/ui/background-beams'
@@ -15,6 +16,13 @@ export default class MyApp extends App {
         const { Component, pageProps } = this.props;
         return (
             <React.Fragment>
+              <Head>
+                <meta name="theme-color" content="#0a0a0a" />
+                <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0a0a0a" />
+                <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a" />
+                <meta name="color-scheme" content="dark" />
+                <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+              </Head>
               <div className="fixed inset-0 z-0 bg-neutral-950 pointer-events-none">
                 <BackgroundBeams />
               </div>

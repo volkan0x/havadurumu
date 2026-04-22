@@ -292,7 +292,8 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
           <Head>
             <title>{homeTitle}</title>
             <meta name='description' content={homeDescription}/>
-            <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'/>
+            <meta name='theme-color' content='#0a0a0a'/>
             <link rel='canonical' href={canonicalUrl}/>
             <link rel='icon' href='/favicon.ico'/>
             <meta property='og:type' content='website'/>

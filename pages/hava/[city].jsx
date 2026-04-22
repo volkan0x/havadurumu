@@ -410,6 +410,8 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
       <Head>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#0a0a0a" />
         {!isIndexable && <meta name="robots" content="noindex, nofollow" />}
         <link rel="canonical" href={canonicalUrl} />
         <link rel="alternate" hrefLang="tr-TR" href={canonicalUrl} />
