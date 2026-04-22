@@ -12,7 +12,6 @@ import App from '@/components/Weather3'
 import CanvasTextDemo from '@/components/canvas-text-demo'
 import { BackgroundBeamsWithCollision } from '@/components/ui/background-beams-with-collision'
 import { provinces } from '@/data/provinces'
-import Logo from '@/public/logo4x.png'
 import cloud from '../icons/cloud.png'
 import fewcloud from '../icons/mostly_sunny.png'
 import midcloud from '../icons/partly_sunny.png'
@@ -308,35 +307,6 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
             <div className="pointer-events-none absolute inset-0">
               <div className="absolute -top-24 -left-20 h-64 w-64 rounded-full bg-cyan-400/20 blur-3xl"></div>
               <div className="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl"></div>
-            </div>
-            <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-6">
-              <Link href="/" className="flex items-center gap-3">
-                <Image className="h-8 w-8"
-                     src={Logo}
-                     alt="Havadurumu logo"/>
-                <span className="text-sm font-semibold tracking-wide text-slate-100">Havadurumu</span>
-              </Link>
-
-              <div className="flex items-center gap-2 rounded-full border border-slate-300/30 bg-transparent p-1 backdrop-blur-md">
-                <Link
-                  href="/"
-                  className="rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
-                >
-                  Ana Sayfa
-                </Link>
-                <Link
-                  href="/#sehirler"
-                  className="rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
-                >
-                  Sehirler
-                </Link>
-              </div>
-            </div>
-            <div className="flex lg:px-4 sm:px-6">
-              <div className="relative flex h-16 items-center ">
-                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                </div>
-              </div>
             </div>
             <BackgroundBeamsWithCollision className='h-auto min-h-[260px] bg-transparent from-transparent to-transparent dark:from-transparent dark:to-transparent'>
               <div className='relative z-10 py-10 px-4 mx-auto text-center'>

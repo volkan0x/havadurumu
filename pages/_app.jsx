@@ -3,6 +3,7 @@ import App  from 'next/app';
 import {DefaultSeo} from 'next-seo'
 import React from 'react'
 import { BackgroundBeams } from '@/components/ui/background-beams'
+import GlobalNavbar from '@/components/GlobalNavbar'
 
 
 // export default function MyApp({ Component, pageProps }) {
@@ -17,6 +18,7 @@ export default class MyApp extends App {
               <div className="fixed inset-0 z-0 bg-neutral-950 pointer-events-none">
                 <BackgroundBeams />
               </div>
+              <GlobalNavbar />
               <div className="relative z-10">
                 <DefaultSeo
                 title="Hava Durumu 15 Gunluk"
@@ -43,7 +45,9 @@ export default class MyApp extends App {
                   cardType: 'summary_large_image'
                 }}
               />
-              <Component {...pageProps} />
+              <div className="pt-24">
+                <Component {...pageProps} />
+              </div>
               </div>
           </React.Fragment>
         );
