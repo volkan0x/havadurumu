@@ -13,6 +13,7 @@ import lightrain from '../../icons/partly_sunny_rain.png'
 import moderaterain from '../../icons/rain_cloud.png'
 import heavyrain from '../../icons/thunder_cloud_and_rain.png'
 import { provinces } from '@/data/provinces'
+import { getOrSetServerCache } from '@/lib/serverCache'
 import Home from '../home'
 
 const DESCRIPTION_MAP = {
@@ -628,6 +629,8 @@ export default function WeatherCityPage({ cityLabel, citySlug, forecastItems, ap
 }
 
 export async function getServerSideProps(context) {
+  context.res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=1800')
+
   const cityParam = typeof context?.params?.city === 'string' ? context.params.city : ''
   const cityLabel = normalizeCityLabel(cityParam)
   const cityQuery = cityLabel
@@ -651,10 +654,20 @@ export async function getServerSideProps(context) {
 
   try {
     const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(cityQuery)}&limit=1&appid=${weatherApiKey}`
-    const geoResponse = await fetch(geoUrl)
-    const geoData = await geoResponse.json()
+    const geoCacheKey = `geo:${cityQuery.toLowerCase()}`
+    const { data: geoResult } = await getOrSetServerCache(geoCacheKey, 24 * 60 * 60 * 1000, async () => {
+      const response = await fetch(geoUrl)
+      const data = await response.json()
+      return {
+        ok: response.ok,
+        data
+      }
+    })
 
-    if (!geoResponse.ok || !Array.isArray(geoData) || geoData.length === 0) {
+    const geoResponseOk = geoResult?.ok
+    const geoData = geoResult?.data
+
+    if (!geoResponseOk || !Array.isArray(geoData) || geoData.length === 0) {
       return {
         props: {
           cityLabel,
@@ -669,10 +682,20 @@ export async function getServerSideProps(context) {
 
     const { lat, lon, name } = geoData[0]
     const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&cnt=40&appid=${weatherApiKey}`
-    const forecastResponse = await fetch(forecastUrl)
-    const forecastData = await forecastResponse.json()
+    const forecastCacheKey = `forecast:${Number(lat).toFixed(3)}:${Number(lon).toFixed(3)}`
+    const { data: forecastResult } = await getOrSetServerCache(forecastCacheKey, 10 * 60 * 1000, async () => {
+      const response = await fetch(forecastUrl)
+      const data = await response.json()
+      return {
+        ok: response.ok,
+        data
+      }
+    })
 
-    if (!forecastResponse.ok || !Array.isArray(forecastData?.list)) {
+    const forecastResponseOk = forecastResult?.ok
+    const forecastData = forecastResult?.data
+
+    if (!forecastResponseOk || !Array.isArray(forecastData?.list)) {
       return {
         props: {
           cityLabel: name || cityLabel,
