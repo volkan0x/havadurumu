@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Card, CardHeader, CardFooter, Button} from "@nextui-org/react";
+import {Card, CardHeader, CardFooter} from "@nextui-org/react";
 import axios from "axios";
 import Link from 'next/link';
 import cloud from "../icons/cloud.png";
@@ -188,11 +188,11 @@ export default function App() {
                                 <div>
                                     <p className="text-white/80 text-xs md:text-sm">Yağmur ihtimali %80</p>
                                 </div>
-                                <Button 
-                                    className="text-xs md:text-sm text-white/80 bg-black/40 rounded p-1 m-1 md:m-2" 
+                                <span
+                                    className="text-xs md:text-sm text-white/80 bg-black/40 rounded p-1 m-1 md:m-2"
                                 >
                                     15 Günlük
-                                </Button>
+                                </span>
                             </CardFooter>
                         </Card>
                     </Link>
