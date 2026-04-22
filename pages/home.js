@@ -202,12 +202,39 @@ const Home = ({ children, Cardd = true, iFrame = true, showLocalCityPanel = true
     router.push(`/hava/${encodeURIComponent(normalizedCity)}`)
   }
 
+  const canonicalUrl = 'https://www.havadurumu15.com/'
+  const homeTitle = 'Hava Durumu 15 Gunluk | Turkiye Il Il Tahmin'
+  const homeDescription = 'Turkiye geneli il il 15 gunluk hava durumu tahminleri, anlik sicaklik, nem ve yagis olasiligi verileri.'
+
+  const webSiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Havadurumu15',
+    inLanguage: 'tr-TR',
+    url: canonicalUrl,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://www.havadurumu15.com/hava/{search_term_string}',
+      'query-input': 'required name=search_term_string'
+    }
+  }
+
 
     return (
         <div>
           <Head>
+            <title>{homeTitle}</title>
+            <meta name='description' content={homeDescription}/>
             <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+            <link rel='canonical' href={canonicalUrl}/>
             <link rel='icon' href='/favicon.ico'/>
+            <meta property='og:type' content='website'/>
+            <meta property='og:locale' content='tr_TR'/>
+            <meta property='og:title' content={homeTitle}/>
+            <meta property='og:description' content={homeDescription}/>
+            <meta property='og:url' content={canonicalUrl}/>
+            <meta name='twitter:card' content='summary_large_image'/>
+            <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }} />
           </Head>
           <nav className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-700">
             <div className="pointer-events-none absolute inset-0">

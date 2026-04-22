@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Card, CardHeader, CardFooter, Button} from "@nextui-org/react";
 import axios from "axios";
+import Link from 'next/link';
 import cloud from "../icons/cloud.png";
 import fewcloud from "../icons/mostly_sunny.png"
 import midcloud from "../icons/partly_sunny.png"
@@ -10,94 +11,9 @@ import lightrain from "../icons/partly_sunny_rain.png"
 import moderaterain from "../icons/rain_cloud.png"
 import heavyrain from "../icons/thunder_cloud_and_rain.png"
 import Image from "next/image";
-import {useRouter} from 'next/router';
-
-const provinces = [
-    { name: 'Adana', slug: 'adana', query: 'Adana,TR' },
-    { name: 'Adiyaman', slug: 'adiyaman', query: 'Adiyaman,TR' },
-    { name: 'Afyonkarahisar', slug: 'afyonkarahisar', query: 'Afyonkarahisar,TR' },
-    { name: 'Agri', slug: 'agri', query: 'Agri,TR' },
-    { name: 'Amasya', slug: 'amasya', query: 'Amasya,TR' },
-    { name: 'Ankara', slug: 'ankara', query: 'Ankara,TR' },
-    { name: 'Antalya', slug: 'antalya', query: 'Antalya,TR' },
-    { name: 'Artvin', slug: 'artvin', query: 'Artvin,TR' },
-    { name: 'Aydin', slug: 'aydin', query: 'Aydin,TR' },
-    { name: 'Balikesir', slug: 'balikesir', query: 'Balikesir,TR' },
-    { name: 'Bilecik', slug: 'bilecik', query: 'Bilecik,TR' },
-    { name: 'Bingol', slug: 'bingol', query: 'Bingol,TR' },
-    { name: 'Bitlis', slug: 'bitlis', query: 'Bitlis,TR' },
-    { name: 'Bolu', slug: 'bolu', query: 'Bolu,TR' },
-    { name: 'Burdur', slug: 'burdur', query: 'Burdur,TR' },
-    { name: 'Bursa', slug: 'bursa', query: 'Bursa,TR' },
-    { name: 'Canakkale', slug: 'canakkale', query: 'Canakkale,TR' },
-    { name: 'Cankiri', slug: 'cankiri', query: 'Cankiri,TR' },
-    { name: 'Corum', slug: 'corum', query: 'Corum,TR' },
-    { name: 'Denizli', slug: 'denizli', query: 'Denizli,TR' },
-    { name: 'Diyarbakir', slug: 'diyarbakir', query: 'Diyarbakir,TR' },
-    { name: 'Edirne', slug: 'edirne', query: 'Edirne,TR' },
-    { name: 'Elazig', slug: 'elazig', query: 'Elazig,TR' },
-    { name: 'Erzincan', slug: 'erzincan', query: 'Erzincan,TR' },
-    { name: 'Erzurum', slug: 'erzurum', query: 'Erzurum,TR' },
-    { name: 'Eskisehir', slug: 'eskisehir', query: 'Eskisehir,TR' },
-    { name: 'Gaziantep', slug: 'gaziantep', query: 'Gaziantep,TR' },
-    { name: 'Giresun', slug: 'giresun', query: 'Giresun,TR' },
-    { name: 'Gumushane', slug: 'gumushane', query: 'Gumushane,TR' },
-    { name: 'Hakkari', slug: 'hakkari', query: 'Hakkari,TR' },
-    { name: 'Hatay', slug: 'hatay', query: 'Hatay,TR' },
-    { name: 'Isparta', slug: 'isparta', query: 'Isparta,TR' },
-    { name: 'Mersin', slug: 'mersin', query: 'Mersin,TR' },
-    { name: 'Istanbul', slug: 'istanbul', query: 'Istanbul,TR' },
-    { name: 'Izmir', slug: 'izmir', query: 'Izmir,TR' },
-    { name: 'Kars', slug: 'kars', query: 'Kars,TR' },
-    { name: 'Kastamonu', slug: 'kastamonu', query: 'Kastamonu,TR' },
-    { name: 'Kayseri', slug: 'kayseri', query: 'Kayseri,TR' },
-    { name: 'Kirklareli', slug: 'kirklareli', query: 'Kirklareli,TR' },
-    { name: 'Kirsehir', slug: 'kirsehir', query: 'Kirsehir,TR' },
-    { name: 'Kocaeli', slug: 'kocaeli', query: 'Kocaeli,TR' },
-    { name: 'Konya', slug: 'konya', query: 'Konya,TR' },
-    { name: 'Kutahya', slug: 'kutahya', query: 'Kutahya,TR' },
-    { name: 'Malatya', slug: 'malatya', query: 'Malatya,TR' },
-    { name: 'Manisa', slug: 'manisa', query: 'Manisa,TR' },
-    { name: 'Kahramanmaras', slug: 'kahramanmaras', query: 'Kahramanmaras,TR' },
-    { name: 'Mardin', slug: 'mardin', query: 'Mardin,TR' },
-    { name: 'Mugla', slug: 'mugla', query: 'Mugla,TR' },
-    { name: 'Mus', slug: 'mus', query: 'Mus,TR' },
-    { name: 'Nevsehir', slug: 'nevsehir', query: 'Nevsehir,TR' },
-    { name: 'Nigde', slug: 'nigde', query: 'Nigde,TR' },
-    { name: 'Ordu', slug: 'ordu', query: 'Ordu,TR' },
-    { name: 'Rize', slug: 'rize', query: 'Rize,TR' },
-    { name: 'Sakarya', slug: 'sakarya', query: 'Sakarya,TR' },
-    { name: 'Samsun', slug: 'samsun', query: 'Samsun,TR' },
-    { name: 'Siirt', slug: 'siirt', query: 'Siirt,TR' },
-    { name: 'Sinop', slug: 'sinop', query: 'Sinop,TR' },
-    { name: 'Sivas', slug: 'sivas', query: 'Sivas,TR' },
-    { name: 'Tekirdag', slug: 'tekirdag', query: 'Tekirdag,TR' },
-    { name: 'Tokat', slug: 'tokat', query: 'Tokat,TR' },
-    { name: 'Trabzon', slug: 'trabzon', query: 'Trabzon,TR' },
-    { name: 'Tunceli', slug: 'tunceli', query: 'Tunceli,TR' },
-    { name: 'Sanliurfa', slug: 'sanliurfa', query: 'Sanliurfa,TR' },
-    { name: 'Usak', slug: 'usak', query: 'Usak,TR' },
-    { name: 'Van', slug: 'van', query: 'Van,TR' },
-    { name: 'Yozgat', slug: 'yozgat', query: 'Yozgat,TR' },
-    { name: 'Zonguldak', slug: 'zonguldak', query: 'Zonguldak,TR' },
-    { name: 'Aksaray', slug: 'aksaray', query: 'Aksaray,TR' },
-    { name: 'Bayburt', slug: 'bayburt', query: 'Bayburt,TR' },
-    { name: 'Karaman', slug: 'karaman', query: 'Karaman,TR' },
-    { name: 'Kirikkale', slug: 'kirikkale', query: 'Kirikkale,TR' },
-    { name: 'Batman', slug: 'batman', query: 'Batman,TR' },
-    { name: 'Sirnak', slug: 'sirnak', query: 'Sirnak,TR' },
-    { name: 'Bartin', slug: 'bartin', query: 'Bartin,TR' },
-    { name: 'Ardahan', slug: 'ardahan', query: 'Ardahan,TR' },
-    { name: 'Igdir', slug: 'igdir', query: 'Igdir,TR' },
-    { name: 'Yalova', slug: 'yalova', query: 'Yalova,TR' },
-    { name: 'Karabuk', slug: 'karabuk', query: 'Karabuk,TR' },
-    { name: 'Kilis', slug: 'kilis', query: 'Kilis,TR' },
-    { name: 'Osmaniye', slug: 'osmaniye', query: 'Osmaniye,TR' },
-    { name: 'Duzce', slug: 'duzce', query: 'Duzce,TR' }
-];
+import { provinces } from '@/data/provinces';
 
 export default function App() {
-    const router = useRouter();
     const weatherApiKey = process.env.NEXT_PUBLIC_WEATHER_KEY;
     const [weatherBySlug, setWeatherBySlug] = useState({});
     const [apiError, setApiError] = useState("");
@@ -119,10 +35,6 @@ export default function App() {
                 {formattedValue !== '--' && <span className='text-xs align-text-top'>°C</span>}
             </>
         );
-    };
-
-    const handleCardClick = (city) => {
-        router.push(`/hava/${city.toLowerCase()}`);
     };
 
     const formatDate = (value) => {
@@ -218,13 +130,13 @@ export default function App() {
                     </div>
                     <nav className="flex flex-wrap items-center gap-2 md:justify-end">
                         {navCities.map((city) => (
-                            <button
+                            <Link
                                 key={city.slug}
-                                onClick={() => handleCardClick(city.slug)}
+                                href={`/hava/${city.slug}`}
                                 className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs md:text-sm text-white hover:bg-white/20 transition-colors"
                             >
                                 {city.name}
-                            </button>
+                            </Link>
                         ))}
                     </nav>
                 </div>
@@ -241,10 +153,10 @@ export default function App() {
                     const cityDate = formatDate(cityWeather?.dt);
 
                     return (
-                    <div 
-                        key={idx} 
-                        onClick={() => handleCardClick(city.slug)} 
-                        className="cursor-pointer h-full"
+                    <Link
+                        key={idx}
+                        href={`/hava/${city.slug}`}
+                        className="cursor-pointer h-full block"
                     >
                         <Card 
                             isFooterBlurred
@@ -283,7 +195,7 @@ export default function App() {
                                 </Button>
                             </CardFooter>
                         </Card>
-                    </div>
+                    </Link>
                 )})}
             </div>
         </div>
