@@ -9,6 +9,7 @@ import Link from 'next/link'
 import axios from 'axios'
 
 import App from '@/components/Weather3'
+import NavbarDemo from '@/components/resizable-navbar-demo'
 import CanvasTextDemo from '@/components/canvas-text-demo'
 import { Illustration } from '@/components/ui/glowing-stars'
 import { provinces } from '@/data/provinces'

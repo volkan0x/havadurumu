@@ -30,6 +30,8 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@types/node": "25.6.0",
+    "@types/react": "18.3.28",
     "autoprefixer": "^10.4.16",
     "axios": "^1.5.1",
     "eslint": "^8.57.1",
